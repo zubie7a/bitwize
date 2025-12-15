@@ -117,7 +117,7 @@
             image-rendering: crisp-edges;
             width: auto;
             height: auto;
-            max-width: calc(100vw - 300px);
+            max-width: calc(100vw - 500px);
             max-height: 100vh;
             transition: max-width 0.3s ease;
         }
@@ -201,6 +201,29 @@
             background-color: #454545;
         }
         
+        #evaluate-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007acc;
+            color: #ffffff;
+            border: 1px solid #005a9e;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+        
+        #evaluate-button:hover {
+            background-color: #0086d9;
+            border-color: #006bb3;
+        }
+        
+        #evaluate-button:active {
+            background-color: #006bb3;
+        }
+        
         h3 {
             margin: 0 0 15px 0;
             font-size: 16px;
@@ -250,10 +273,14 @@
                 <option value="% 255">% 255</option>
                 <option value="[0,255]">[0,255]</option>
             </select>
-        </div>
-        
+        </div>        
         <div class="code-snippet">    }
 }</div>
+    <div style="margin: 20px 0;">
+        <button id="evaluate-button" style="width: 100%; padding: 12px; background-color: #007acc; color: #ffffff; border: 1px solid #005a9e; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; transition: all 0.2s;">
+            Evaluate
+        </button>
+    </div>
     </div>
     
     <div id="canvas-container"></div>
@@ -286,7 +313,7 @@
             const canvasElement = document.querySelector('canvas');
             if (canvasElement) {
                 const isHidden = sidebar.classList.contains('hidden');
-                const availableWidth = isHidden ? window.innerWidth : window.innerWidth - 300;
+                const availableWidth = isHidden ? window.innerWidth : window.innerWidth - 500;
                 const size = Math.min(availableWidth, window.innerHeight);
                 canvasElement.style.width = size + 'px';
                 canvasElement.style.height = size + 'px';
