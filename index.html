@@ -266,9 +266,10 @@
             </select>
         </div>
         
-        <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+        <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
             <input type="checkbox" id="use-time-toggle" style="cursor: pointer; width: 18px; height: 18px;">
             <label for="use-time-toggle" style="color: #e0e0e0; font-size: 13px; cursor: pointer;">use time variable (t)</label>
+            <span id="time-display" style="color: #888; font-size: 12px; margin-left: auto; display: none;">t = <span id="time-value">0</span></span>
         </div>
         
         <div class="code-snippet">for (i in range(0, 256)) {

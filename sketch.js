@@ -173,155 +173,169 @@ function setup() {
     
     // Handle time variable toggle
     const useTimeToggle = document.getElementById('use-time-toggle');
+    const timeDisplay = document.getElementById('time-display');
+    const timeValue = document.getElementById('time-value');
+    
     if (useTimeToggle) {
         useTimeToggle.addEventListener('change', function() {
             params.useTime = this.checked;
             if (params.useTime) {
                 // If enabled, reset counter and start the loop
                 timeCounter = 0;
+                if (timeDisplay) timeDisplay.style.display = 'block';
+                if (timeValue) timeValue.textContent = timeCounter;
                 loop();
             } else {
                 // If disabled, stop after current frame
                 // The draw function will call noLoop() at the end
+                if (timeDisplay) timeDisplay.style.display = 'none';
             }
         });
     }
     
-    // Preset definitions
-    const presets = {
-        sketch_01: {
+    // Preset definitions as array (index 0 is null for Custom)
+    const presets = [
+        null, // Custom (index 0)
+        { // sketch_01 (index 1)
             x: '((i % 255) + (j % 255)) % 255',
             r: '((i % 255) ^ (j % 255)) % 255',
             g: '(x & i) & 255',
             b: '(x & j) & 255'
         },
-        sketch_02: {
+        { // sketch_02 (index 2)
             x: '((i % 255) + (j % 255)) % 255',
             r: 'x % 255',
             g: '(x & i) & 255',
             b: '(x & j) & 255'
         },
-        sketch_03: {
+        { // sketch_03 (index 3)
             x: '((i % 255) + (j % 255)) % 255',
             r: '(x & i) & 255',
             g: 'x % 255',
             b: '(x & j) & 255'
         },
-        sketch_04: {
+        { // sketch_04 (index 4)
             x: '((i % 255) + (j % 255)) % 255',
             r: '(x & i) & 255',
             g: '(x & j) & 255',
             b: 'x % 255'
         },
-        sketch_05: {
+        { // sketch_05 (index 5)
             x: 'Math.abs((i & j - 2*(i^j) + j & i) % 255)',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_06: {
+        { // sketch_06 (index 6)
             x: '(i & j - 2*(i^j) + j & i) % 255',
             r: '(x + i & j) % 255',
             g: 'x % 255',
             b: 'x % 255'
         },
-        sketch_07: {
+        { // sketch_07 (index 7)
             x: '(i & j - 2*(i^j) + i & j) % 255',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_08: {
+        { // sketch_08 (index 8)
             x: '(i & j - 2*(i^j) + i & j) % 255',
             r: '(x + i) % 255',
             g: '((x + i & j) * 2) % 255',
             b: '(x + j) / 2'
         },
-        sketch_09: {
+        { // sketch_09 (index 9)
             x: '(i & j + 2*(i^j) + i & j) % 255',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_10: {
+        { // sketch_10 (index 10)
             x: '(i & j + 2*(i^j) + i & j) % 255',
             r: '((x + i & j) * 2) % 255',
-            g: 'x',
-            b: 'x'
+            g: 'x&t',
+            b: 'x&t'
         },
-        sketch_11: {
+        { // sketch_11 (index 11)
             x: 'i*i + 2*(i|j) + j*j',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_12: {
+        { // sketch_12 (index 12)
             x: 'i*i + 2*(i|j) + j*j',
             r: 'x',
             g: 'x ^ j',
             b: 'x ^ (i | j)'
         },
-        sketch_13: {
+        { // sketch_13 (index 13)
             x: '(i * j) % 255',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_14: {
+        { // sketch_14 (index 14)
             x: 'Math.abs((i & j) * Math.sin(i | j) + (i & j) * Math.cos(i | j))',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_15: {
+        { // sketch_15 (index 15)
             x: 'Math.abs((i & j) * Math.tan(i | j))',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_16: {
+        { // sketch_16 (index 16)
             x: 'Math.abs((i & j) * Math.sin(i | j))',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_17: {
+        { // sketch_17 (index 17)
             x: 'Math.abs((i & j) * Math.tan(i | j))',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_18: {
+        { // sketch_18 (index 18)
             x: 'Math.abs((i & j & t) * Math.tan(i | j | t))',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_19: {
+        { // sketch_19 (index 19)
             x: '((i ^ j) * Math.tan(i ^ j))',
             r: '(i & j) * Math.atan(x)',
             g: '(i | j) * Math.cos(x)',
             b: '(i ^ j) * Math.sin(x)'
+        },
+        { // sketch_20 (index 20)
+            x: '((i ^ j ^ t) * Math.tan(i ^ j ^ t))',
+            r: 'x',
+            g: '',
+            b: ''
         }
-    };
+    ];
 
     // Handle preset selection
     const presetSelect = document.getElementById('preset-select');
     if (presetSelect) {
         presetSelect.addEventListener('change', function() {
-            const preset = this.value;
+            const presetIndex = this.selectedIndex;
             
-            if (preset === 'custom') {
-                // Don't change anything for custom
+            if (presetIndex === 0) {
+                // Custom - don't change anything
                 return;
             }
             
-            if (presets[preset]) {
+            const preset = presets[presetIndex];
+            if (preset) {
                 // Set the formulas in the input fields
-                if (xInput) xInput.value = presets[preset].x || '';
-                if (rInput) rInput.value = presets[preset].r || '';
-                if (gInput) gInput.value = presets[preset].g || '';
-                if (bInput) bInput.value = presets[preset].b || '';
+                if (xInput) xInput.value = preset.x || '';
+                if (rInput) rInput.value = preset.r || '';
+                if (gInput) gInput.value = preset.g || '';
+                if (bInput) bInput.value = preset.b || '';
                 
                 // Update params and immediately evaluate
                 updateFormulasFromInputs();
@@ -370,6 +384,12 @@ function draw() {
     
     // Use time counter: starts at 0, increases by 5 each frame
     const t = timeCounter;
+    
+    // Update time display in GUI
+    const timeValueElement = document.getElementById('time-value');
+    if (timeValueElement && params.useTime) {
+        timeValueElement.textContent = t;
+    }
     
     for (let i = 0; i < 256; i++) {
         for (let j = 0; j < 256; j++) {
