@@ -226,91 +226,85 @@ function setup() {
             b: 'x % 255'
         },
         sketch_07: {
-            x: '(i & j - 2*(i^j) + j & i) % 255',
-            r: 'x % 255',
-            g: '(x + i & j) % 255',
-            b: 'x % 255'
+            x: '(i & j - 2*(i^j) + i & j) % 255',
+            r: 'x',
+            g: 'x',
+            b: 'x'
         },
         sketch_08: {
-            x: '(i & j - 2*(i^j) + j & i) % 255',
-            r: 'x % 255',
-            g: 'x % 255',
-            b: '(x + i & j) % 255'
-        },
-        sketch_09: {
             x: '(i & j - 2*(i^j) + i & j) % 255',
             r: '(x + i) % 255',
             g: '((x + i & j) * 2) % 255',
             b: '(x + j) / 2'
         },
-        sketch_10: {
-            x: '(i & j - 2*(i^j) + i & j) % 255',
+        sketch_09: {
+            x: '(i & j + 2*(i^j) + i & j) % 255',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_11: {
+        sketch_10: {
             x: '(i & j + 2*(i^j) + i & j) % 255',
+            r: '((x + i & j) * 2) % 255',
+            g: 'x',
+            b: 'x'
+        },
+        sketch_11: {
+            x: 'i*i + 2*(i|j) + j*j',
             r: 'x',
             g: 'x',
             b: 'x'
         },
         sketch_12: {
-            x: '(i & j + 2*(i^j) + i & j) % 255',
-            r: 'x',
-            g: 'x',
-            b: 'x'
-        },
-        sketch_13: {
             x: 'i*i + 2*(i|j) + j*j',
             r: 'x',
             g: 'x ^ j',
             b: 'x ^ (i | j)'
         },
-        sketch_14: {
+        sketch_13: {
             x: '(i * j) % 255',
-            r: '(x * i) % 255',
-            g: '(i * j) % 255',
-            b: '(j * x) % 255'
+            r: 'x',
+            g: 'x',
+            b: 'x'
         },
-        sketch_15: {
-            x: '(i + j) * (i - j)',
-            r: 'x & i',
-            g: '0',
-            b: '0'
-        },
-        sketch_16: {
-            x: 'i & j + i & j',
-            r: 'x + i / 4 + 3 * j / 4',
-            g: 'x + (i / 2 + j / 2)',
-            b: 'x + j / 4 + 3 * i / 4'
-        },
-        sketch_17: {
+        sketch_14: {
             x: 'Math.abs((i & j) * Math.sin(i | j) + (i & j) * Math.cos(i | j))',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_18: {
+        sketch_15: {
             x: 'Math.abs((i & j) * Math.tan(i | j))',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_19: {
+        sketch_16: {
             x: 'Math.abs((i & j) * Math.sin(i | j))',
             r: 'x',
             g: 'x',
             b: 'x'
         },
-        sketch_20: {
+        sketch_17: {
             x: 'Math.abs((i & j) * Math.tan(i | j))',
             r: 'x',
             g: 'x',
             b: 'x'
+        },
+        sketch_18: {
+            x: 'Math.abs((i & j & t) * Math.tan(i | j | t))',
+            r: 'x',
+            g: 'x',
+            b: 'x'
+        },
+        sketch_19: {
+            x: '((i ^ j) * Math.tan(i ^ j))',
+            r: '(i & j) * Math.atan(x)',
+            g: '(i | j) * Math.cos(x)',
+            b: '(i ^ j) * Math.sin(x)'
         }
     };
-    
+
     // Handle preset selection
     const presetSelect = document.getElementById('preset-select');
     if (presetSelect) {
@@ -414,6 +408,9 @@ function draw() {
     // Increment time counter by 5
     timeCounter += 5;
     timeCounter %= 200;
+    if (timeCounter === 0) {
+        timeCounter = 5;
+    }
 
     // Only call noLoop() if time variable is not enabled
     if (!params.useTime) {
