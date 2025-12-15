@@ -5,8 +5,11 @@ let params = {
     xFormula: '',
     rFormula: '',
     gFormula: '',
-    bFormula: ''
+    bFormula: '',
+    useTime: false
 };
+
+let timeCounter = 0;
 
 function redrawCanvas() {
     background(0);
@@ -22,38 +25,20 @@ function applyOperation(value, operation) {
     return value;
 }
 
-function evaluateFormula(formula, i, j, x = 0) {
+function evaluateFormula(formula, i, j, x = 0, t = 1) {
     if (!formula || formula.trim() === '') {
         return 0;
     }
     
     try {
-        // Replace i, j, and x with their actual values
+        // Replace i, j, x, and t with their actual values
         // Use word boundaries to avoid replacing parts of other identifiers like "Math"
         let expression = formula
             .replace(/\bi\b/g, i.toString())
             .replace(/\bj\b/g, j.toString())
-            .replace(/\bx\b/g, x.toString());
-        
-        // Handle bitwise operations - need to ensure operands are integers
-        // First, handle standalone bitwise operations
-        // Replace patterns like "i & j" or "i^j" or "i|j"
-        // We need to be careful with operator precedence
-        
-        // Tokenize and process bitwise operators
-        // Split by operators but preserve them
-        const tokens = expression.match(/(\d+|\w+|\S)/g) || [];
-        
-        // Process bitwise operators with proper precedence
-        // JavaScript bitwise operators: & (AND), | (OR), ^ (XOR)
-        // They have lower precedence than arithmetic, so we need parentheses
-        
-        // For now, use a simpler approach: replace bitwise ops directly
-        // Since we've already replaced i, j, x with numbers, we can evaluate directly
-        // But we need to handle operator precedence correctly
-        
-        // Use eval in a safer way by creating a function
-        // The expression should now have numbers and operators
+            .replace(/\bx\b/g, x.toString())
+            .replace(/\bt\b/g, t.toString());
+                
         const result = Function('"use strict"; return ' + expression)();
         return Math.floor(Number(result)) || 0;
     } catch (e) {
@@ -63,7 +48,7 @@ function evaluateFormula(formula, i, j, x = 0) {
 }
 
 function setup() {
-    createCanvas(512, 512);
+    createCanvas(256, 256);
     background(0);
     frameRate(160);
     
@@ -100,13 +85,28 @@ function setup() {
     // Function to trigger evaluation
     function triggerEvaluation() {
         updateFormulasFromInputs();
+        // Reset time counter when manually evaluating
+        if (!params.useTime) {
+            timeCounter = 1;
+        }
         redrawCanvas();
+        // Resume animation if time toggle is enabled
+        if (params.useTime) {
+            loop();
+        }
+    }
+    
+    // Function to pause animation when editing
+    function pauseAnimation() {
+        noLoop();
     }
     
     // Add change listeners for inputs (just update params, don't redraw)
     if (xInput) {
+        xInput.addEventListener('focus', pauseAnimation);
         xInput.addEventListener('input', function() {
             params.xFormula = this.value;
+            pauseAnimation();
         });
         xInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -117,8 +117,10 @@ function setup() {
     }
     
     if (rInput) {
+        rInput.addEventListener('focus', pauseAnimation);
         rInput.addEventListener('input', function() {
             params.rFormula = this.value;
+            pauseAnimation();
         });
         rInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -129,8 +131,10 @@ function setup() {
     }
     
     if (gInput) {
+        gInput.addEventListener('focus', pauseAnimation);
         gInput.addEventListener('input', function() {
             params.gFormula = this.value;
+            pauseAnimation();
         });
         gInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -141,8 +145,10 @@ function setup() {
     }
     
     if (bInput) {
+        bInput.addEventListener('focus', pauseAnimation);
         bInput.addEventListener('input', function() {
             params.bFormula = this.value;
+            pauseAnimation();
         });
         bInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -156,6 +162,22 @@ function setup() {
     const evaluateButton = document.getElementById('evaluate-button');
     if (evaluateButton) {
         evaluateButton.addEventListener('click', triggerEvaluation);
+    }
+    
+    // Handle time variable toggle
+    const useTimeToggle = document.getElementById('use-time-toggle');
+    if (useTimeToggle) {
+        useTimeToggle.addEventListener('change', function() {
+            params.useTime = this.checked;
+            if (params.useTime) {
+                // If enabled, reset counter and start the loop
+                timeCounter = 0;
+                loop();
+            } else {
+                // If disabled, stop after current frame
+                // The draw function will call noLoop() at the end
+            }
+        });
     }
     
     // Preset definitions
@@ -338,28 +360,31 @@ function windowResized() {
 }
 
 function draw() {
-    for (let i = 0; i < 512; i++) {
-        for (let j = 0; j < 512; j++) {
+    // Use time counter: starts at 0, increases by 5 each frame
+    const t = timeCounter;
+    
+    for (let i = 0; i < 256; i++) {
+        for (let j = 0; j < 256; j++) {
             // Evaluate X formula if provided
             let x = 0;
             if (params.xFormula && params.xFormula.trim() !== '') {
-                x = evaluateFormula(params.xFormula, i, j, 0);
+                x = evaluateFormula(params.xFormula, i, j, 0, t);
             }
         
-            // Evaluate R, G, B formulas (can use i, j, and x)
+            // Evaluate R, G, B formulas (can use i, j, x, and t)
             let r = 0;
             if (params.rFormula && params.rFormula.trim() !== '') {
-                r = evaluateFormula(params.rFormula, i, j, x);
+                r = evaluateFormula(params.rFormula, i, j, x, t);
             }
             
             let g = 0;
             if (params.gFormula && params.gFormula.trim() !== '') {
-                g = evaluateFormula(params.gFormula, i, j, x);
+                g = evaluateFormula(params.gFormula, i, j, x, t);
             }
             
             let b = 0;
             if (params.bFormula && params.bFormula.trim() !== '') {
-                b = evaluateFormula(params.bFormula, i, j, x);
+                b = evaluateFormula(params.bFormula, i, j, x, t);
             }
             
             // Apply final operations
@@ -372,6 +397,13 @@ function draw() {
         }
     }
 
-    noLoop();
+    // Increment time counter by 5
+    timeCounter += 5;
+    timeCounter %= 200;
+
+    // Only call noLoop() if time variable is not enabled
+    if (!params.useTime) {
+        noLoop();
+    }
 }
 
