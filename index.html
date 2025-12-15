@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch 21 - Bitwise Drawing</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            background-color: #1a1a1a;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        #sidebar {
+            width: 300px;
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #404040;
+            transition: transform 0.3s ease, width 0.3s ease;
+        }
+        
+        #sidebar.hidden {
+            transform: translateX(-100%);
+            width: 0;
+            padding: 0;
+            border: none;
+            overflow: visible;
+        }
+        
+        #sidebar.hidden > div {
+            display: none !important;
+        }
+        
+        #sidebar.hidden > *:not(#toggle-sidebar) {
+            display: none;
+        }
+        
+        #toggle-sidebar,
+        #toggle-sidebar-closed {
+            background-color: #3d3d3d;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            transition: all 0.2s;
+            margin-left: 10px;
+            line-height: 1;
+        }
+        
+        #toggle-sidebar:hover,
+        #toggle-sidebar-closed:hover {
+            background-color: #454545;
+            border-color: #666;
+        }
+        
+        #toggle-sidebar-closed {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 10000;
+            margin-left: 0;
+            display: none;
+            visibility: hidden;
+        }
+        
+        #sidebar.hidden ~ #toggle-sidebar-closed {
+            display: block !important;
+            visibility: visible !important;
+        }
+        
+        #sidebar:not(.hidden) ~ #toggle-sidebar-closed {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        
+        #sidebar.hidden #toggle-sidebar {
+            display: none;
+        }
+        
+        #sidebar.hidden div:first-child {
+            display: none !important;
+        }
+        
+        h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        #canvas-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: margin-left 0.3s ease;
+        }
+        
+        canvas {
+            display: block;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            width: auto;
+            height: auto;
+            max-width: calc(100vw - 300px);
+            max-height: 100vh;
+            transition: max-width 0.3s ease;
+        }
+        
+        #sidebar.hidden ~ #canvas-container canvas {
+            max-width: 100vw;
+        }
+        
+        .code-snippet {
+            background-color: #1e1e1e;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 15px 0;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #d4d4d4;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .control-group {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .control-label {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            min-width: 20px;
+        }
+        
+        .control-input {
+            flex: 1;
+            padding: 10px;
+            background-color: #3d3d3d;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+        
+        .control-input:hover {
+            background-color: #454545;
+            border-color: #666;
+        }
+        
+        .control-input:focus {
+            outline: none;
+            border-color: #007acc;
+            background-color: #454545;
+        }
+        
+        select {
+            width: 120px;
+            padding: 8px;
+            background-color: #3d3d3d;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        select:hover {
+            background-color: #454545;
+            border-color: #666;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #007acc;
+            background-color: #454545;
+        }
+        
+        h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <button id="toggle-sidebar-closed">☰</button>
+    <div id="sidebar">
+        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0; display: inline-block;">BitwiZe</h3>
+            <button id="toggle-sidebar">×</button>
+        </div>
+        
+        <div class="code-snippet">for (i in range(0, 640)) {
+    for (j in range(0, 640)) {</div>
+        
+        <div class="control-group">
+            <label class="control-label" for="r-input">r</label>
+            <input type="text" id="r-input" class="control-input" />
+            <select id="r-select">
+                <option value="% 255">% 255</option>
+                <option value="[0,255]">[0,255]</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label" for="g-input">g</label>
+            <input type="text" id="g-input" class="control-input" />
+            <select id="g-select">
+                <option value="% 255">% 255</option>
+                <option value="[0,255]">[0,255]</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label" for="b-input">b</label>
+            <input type="text" id="b-input" class="control-input" />
+            <select id="b-select">
+                <option value="% 255">% 255</option>
+                <option value="[0,255]">[0,255]</option>
+            </select>
+        </div>
+        
+        <div class="code-snippet">    }
+}</div>
+    </div>
+    
+    <div id="canvas-container"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
+    <script src="sketch.js"></script>
+    <script>
+        const toggleButton = document.getElementById('toggle-sidebar');
+        const toggleButtonClosed = document.getElementById('toggle-sidebar-closed');
+        const sidebar = document.getElementById('sidebar');
+        
+        function toggleSidebar() {
+            sidebar.classList.toggle('hidden');
+            const isHidden = sidebar.classList.contains('hidden');
+            // Show/hide buttons based on sidebar state
+            if (isHidden) {
+                toggleButtonClosed.style.display = 'block';
+                toggleButtonClosed.style.visibility = 'visible';
+            } else {
+                toggleButtonClosed.style.display = 'none';
+                toggleButtonClosed.style.visibility = 'hidden';
+            }
+            updateCanvasSize();
+        }
+        
+        toggleButton.addEventListener('click', toggleSidebar);
+        toggleButtonClosed.addEventListener('click', toggleSidebar);
+        
+        function updateCanvasSize() {
+            const canvasElement = document.querySelector('canvas');
+            if (canvasElement) {
+                const isHidden = sidebar.classList.contains('hidden');
+                const availableWidth = isHidden ? window.innerWidth : window.innerWidth - 300;
+                const size = Math.min(availableWidth, window.innerHeight);
+                canvasElement.style.width = size + 'px';
+                canvasElement.style.height = size + 'px';
+            }
+        }
+        
+        // Update canvas size on window resize
+        window.addEventListener('resize', updateCanvasSize);
+    </script>
+</body>
+</html>
+
