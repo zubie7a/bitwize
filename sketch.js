@@ -11,7 +11,7 @@ let params = {
 
 let timeCounter = 0;
 let lastFrameTime = 0;
-const FRAME_DELAY = 200; // milliseconds between frames
+const FRAME_DELAY = 200;
 
 function redrawCanvas() {
     background(0);
@@ -375,14 +375,12 @@ function windowResized() {
 }
 
 function draw() {
-    // Check if enough time has passed since last frame (100ms delay)
     const currentTime = Date.now();
     if (currentTime - lastFrameTime < FRAME_DELAY) {
-        return; // Skip this frame if not enough time has passed
+        return;
     }
     lastFrameTime = currentTime;
     
-    // Use time counter: starts at 0, increases by 5 each frame
     const t = timeCounter;
     
     // Update time display in GUI
@@ -415,7 +413,9 @@ function draw() {
                 b = evaluateFormula(params.bFormula, i, j, x, t);
             }
             
-            // Apply final operations
+            // Apply final operations to constrain values between 0 and 255
+            // This is needed because the formulas can return values outside this range
+            // and this is the only possible range for RGB values.
             r = applyOperation(r, params.rOperation);
             g = applyOperation(g, params.gOperation);
             b = applyOperation(b, params.bOperation);
@@ -425,14 +425,13 @@ function draw() {
         }
     }
 
-    // Increment time counter by 5
+    // Increment time counter by 5 and reset to 5 if it reaches 200
     timeCounter += 5;
     timeCounter %= 200;
     if (timeCounter === 0) {
         timeCounter = 5;
     }
 
-    // Only call noLoop() if time variable is not enabled
     if (!params.useTime) {
         noLoop();
     }
