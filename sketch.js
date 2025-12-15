@@ -12,6 +12,7 @@ let params = {
 let timeCounter = 0;
 let lastFrameTime = 0;
 const FRAME_DELAY = 200;
+let canvasElement = null;
 
 function redrawCanvas() {
     background(0);
@@ -52,13 +53,14 @@ function evaluateFormula(formula, i, j, x = 0, t = 1) {
 }
 
 function setup() {
-    createCanvas(256, 256);
+    const container = document.getElementById('canvas-container');
+    const p5Canvas = createCanvas(256, 256);
+    p5Canvas.parent(container);
+    canvasElement = p5Canvas.elt;
     background(0);
     frameRate(160);
     
     // Update canvas size to account for sidebar
-    let canvasElement = document.querySelector('canvas');
-    let container = document.getElementById('canvas-container');
     let size = Math.min(window.innerWidth - 500, window.innerHeight);
     canvasElement.style.width = size + 'px';
     canvasElement.style.height = size + 'px';
@@ -365,7 +367,7 @@ function setup() {
 }
 
 function windowResized() {
-    let canvasElement = document.querySelector('canvas');
+    if (!canvasElement) return;
     const sidebar = document.getElementById('sidebar');
     const isHidden = sidebar && sidebar.classList.contains('hidden');
     const availableWidth = isHidden ? window.innerWidth : window.innerWidth - 500;
