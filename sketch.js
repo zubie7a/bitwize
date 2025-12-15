@@ -62,7 +62,7 @@ function evaluateFormula(formula, i, j, x = 0) {
 }
 
 function setup() {
-    createCanvas(640, 640);
+    createCanvas(512, 512);
     background(0);
     frameRate(160);
     
@@ -88,31 +88,6 @@ function setup() {
     if (gInput) params.gFormula = gInput.value || '';
     if (bInput) params.bFormula = bInput.value || '';
     
-    // Add change listeners for inputs (just update params, don't redraw)
-    if (xInput) {
-        xInput.addEventListener('input', function() {
-            params.xFormula = this.value;
-        });
-    }
-    
-    if (rInput) {
-        rInput.addEventListener('input', function() {
-            params.rFormula = this.value;
-        });
-    }
-    
-    if (gInput) {
-        gInput.addEventListener('input', function() {
-            params.gFormula = this.value;
-        });
-    }
-    
-    if (bInput) {
-        bInput.addEventListener('input', function() {
-            params.bFormula = this.value;
-        });
-    }
-    
     // Helper function to update all formulas from inputs
     function updateFormulasFromInputs() {
         if (xInput) params.xFormula = xInput.value || '';
@@ -121,13 +96,65 @@ function setup() {
         if (bInput) params.bFormula = bInput.value || '';
     }
     
+    // Function to trigger evaluation
+    function triggerEvaluation() {
+        updateFormulasFromInputs();
+        redrawCanvas();
+    }
+    
+    // Add change listeners for inputs (just update params, don't redraw)
+    if (xInput) {
+        xInput.addEventListener('input', function() {
+            params.xFormula = this.value;
+        });
+        xInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                triggerEvaluation();
+            }
+        });
+    }
+    
+    if (rInput) {
+        rInput.addEventListener('input', function() {
+            params.rFormula = this.value;
+        });
+        rInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                triggerEvaluation();
+            }
+        });
+    }
+    
+    if (gInput) {
+        gInput.addEventListener('input', function() {
+            params.gFormula = this.value;
+        });
+        gInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                triggerEvaluation();
+            }
+        });
+    }
+    
+    if (bInput) {
+        bInput.addEventListener('input', function() {
+            params.bFormula = this.value;
+        });
+        bInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                triggerEvaluation();
+            }
+        });
+    }
+    
     // Add button listener for evaluating formulas
     const evaluateButton = document.getElementById('evaluate-button');
     if (evaluateButton) {
-        evaluateButton.addEventListener('click', function() {
-            updateFormulasFromInputs();
-            redrawCanvas();
-        });
+        evaluateButton.addEventListener('click', triggerEvaluation);
     }
     
     // Selects trigger immediate redraw with current formulas
@@ -161,8 +188,8 @@ function windowResized() {
 }
 
 function draw() {
-    for (let i = 0; i < 640; i++) {
-        for (let j = 0; j < 640; j++) {
+    for (let i = 0; i < 512; i++) {
+        for (let j = 0; j < 512; j++) {
             // Evaluate X formula if provided
             let x = 0;
             if (params.xFormula && params.xFormula.trim() !== '') {
