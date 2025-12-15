@@ -10,9 +10,13 @@ let params = {
 };
 
 let timeCounter = 0;
+let lastFrameTime = 0;
+const FRAME_DELAY = 200; // milliseconds between frames
 
 function redrawCanvas() {
     background(0);
+    // Reset frame timer so manual evaluation renders immediately
+    lastFrameTime = Date.now() - FRAME_DELAY;
     loop();
 }
 
@@ -58,6 +62,9 @@ function setup() {
     let size = Math.min(window.innerWidth - 500, window.innerHeight);
     canvasElement.style.width = size + 'px';
     canvasElement.style.height = size + 'px';
+    
+    // Initialize frame timer so first frame renders immediately
+    lastFrameTime = Date.now() - FRAME_DELAY;
     
     // Setup HTML controls
     const xInput = document.getElementById('x-input');
@@ -360,6 +367,13 @@ function windowResized() {
 }
 
 function draw() {
+    // Check if enough time has passed since last frame (100ms delay)
+    const currentTime = Date.now();
+    if (currentTime - lastFrameTime < FRAME_DELAY) {
+        return; // Skip this frame if not enough time has passed
+    }
+    lastFrameTime = currentTime;
+    
     // Use time counter: starts at 0, increases by 5 each frame
     const t = timeCounter;
     
