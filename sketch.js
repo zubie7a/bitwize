@@ -199,62 +199,62 @@ function setup() {
     const presets = [
         null, // Custom (index 0)
         { // sketch_01 (index 1)
-            x: '((i % 255) + (j % 255)) % 255',
-            r: '((i % 255) ^ (j % 255)) % 255',
+            x: '(i + j)',
+            r: '(i ^ j)',
             g: '(x & i) & 255',
             b: '(x & j) & 255'
         },
         { // sketch_02 (index 2)
-            x: '((i % 255) + (j % 255)) % 255',
-            r: 'x % 255',
+            x: '(i + j)',
+            r: 'x',
             g: '(x & i) & 255',
             b: '(x & j) & 255'
         },
         { // sketch_03 (index 3)
-            x: '((i % 255) + (j % 255)) % 255',
+            x: '(i + j)',
             r: '(x & i) & 255',
-            g: 'x % 255',
+            g: 'x',
             b: '(x & j) & 255'
         },
         { // sketch_04 (index 4)
-            x: '((i % 255) + (j % 255)) % 255',
+            x: '(i + j)',
             r: '(x & i) & 255',
             g: '(x & j) & 255',
-            b: 'x % 255'
+            b: 'x'
         },
         { // sketch_05 (index 5)
-            x: 'Math.abs((i & j - 2*(i^j) + j & i) % 255)',
+            x: 'Math.abs((i & j - 2*(i^j) + j & i))',
             r: 'x',
             g: 'x',
             b: 'x'
         },
         { // sketch_06 (index 6)
-            x: '(i & j - 2*(i^j) + j & i) % 255',
-            r: '(x + i & j) % 255',
-            g: 'x % 255',
-            b: 'x % 255'
+            x: '(i & j - 2*(i^j) + j & i)',
+            r: '(x + i & j)',
+            g: 'x',
+            b: 'x'
         },
         { // sketch_07 (index 7)
-            x: '(i & j - 2*(i^j) + i & j) % 255',
+            x: '(i & j - 2*(i^j) + i & j)',
             r: 'x',
             g: 'x',
             b: 'x'
         },
         { // sketch_08 (index 8)
-            x: '(i & j - 2*(i^j) + i & j) % 255',
-            r: '(x + i) % 255',
-            g: '((x + i & j) * 2) % 255',
+            x: '(i & j - 2*(i^j) + i & j)',
+            r: '(x + i)',
+            g: '((x + i & j) * 2)',
             b: '(x + j) / 2'
         },
         { // sketch_09 (index 9)
-            x: '(i & j + 2*(i^j) + i & j) % 255',
+            x: '(i & j + 2*(i^j) + i & j)',
             r: 'x',
             g: 'x',
             b: 'x'
         },
         { // sketch_10 (index 10)
-            x: '(i & j + 2*(i^j) + i & j) % 255',
-            r: '((x + i & j) * 2) % 255',
+            x: '(i & j + 2*(i^j) + i & j)',
+            r: '((x + i & j) * 2)',
             g: 'x&t',
             b: 'x&t'
         },
@@ -271,7 +271,7 @@ function setup() {
             b: 'x ^ (i | j)'
         },
         { // sketch_13 (index 13)
-            x: '(i * j) % 255',
+            x: '(i * j)',
             r: 'x',
             g: 'x',
             b: 'x'
